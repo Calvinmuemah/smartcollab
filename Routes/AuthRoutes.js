@@ -8,17 +8,24 @@ const nodemailer = require("nodemailer");
 // User Registration
 router.post("/signup", async (req, res) => {
   const { username, email, phone_number, password, confirmPassword } = req.body;
-  
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-    const hashedPassword = await bcrypt.hash(password, confirmPassword, 10);
-    const newUser = new User({ username, email, phone_number, password: hashedPassword, confirmPassword: hashedPassword });
+  try {
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10); // ✅ Correct usage
+    const newUser = new User({ username, email, phone_number, password: hashedPassword });
 
     await newUser.save();
-    res.status(201).json({ message: "Your are registered successfully!" });
+    res.status(201).json({ message: "You are registered successfully!" });
   } catch (error) {
+    console.error("Signup Error:", error);
     res.status(500).json({ error: error.message });
   }
 });
