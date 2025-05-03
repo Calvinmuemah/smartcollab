@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Pharmacy = require("../models/User");
+const User = require("../models/User");
 const nodemailer = require("nodemailer");
 
 // User Registration
@@ -14,7 +14,7 @@ router.post("/signup", async (req, res) => {
     if (existingUser) return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, confirmPassword, 10);
-    const newUser = new Pharmacy({ username, email, phone_number, password: hashedPassword, confirmPassword: hashedPassword });
+    const newUser = new User({ username, email, phone_number, password: hashedPassword, confirmPassword: hashedPassword });
 
     await newUser.save();
     res.status(201).json({ message: "Your are registered successfully!" });

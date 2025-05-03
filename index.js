@@ -41,7 +41,7 @@ const transporter = nodemailer.createTransport({
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("welcome to SmartCollab!");
 });
 
 
