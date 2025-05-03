@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Phone number is required'],
     validate: {
       validator: function (v) {
-        return /^\+?\d{10,15}$/.test(v); // Supports international formats
+        return /^\+?\d{10,15}$/.test(v);
       },
       message: 'Please provide a valid phone number'
     }
@@ -31,23 +31,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
     minlength: [8, 'Password must be at least 8 characters'],
-    select: false // prevent password from being returned in queries
+    select: false
   }
 }, {
   timestamps: true
 });
 
-// Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-// Password comparison method
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
+// ✅ Fix for re-definition issue
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+
 export default User;
