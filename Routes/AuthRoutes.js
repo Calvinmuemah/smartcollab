@@ -19,8 +19,13 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10); // ✅ Correct usage
-    const newUser = new User({ username, email, phone_number, password: hashedPassword });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username,
+      email,
+      phone_number,
+      password: hashedPassword,
+    });
 
     await newUser.save();
     res.status(201).json({ message: "You are registered successfully!" });
@@ -29,6 +34,7 @@ router.post("/signup", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // 🔹 User Login 
 router.post("/login", async (req, res) => {
